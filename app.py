@@ -6,13 +6,12 @@ from sklearn.naive_bayes import MultinomialNB
 st.set_page_config(page_title="Email Spam Classifier", page_icon="📧")
 
 st.title("📧 Email Spam Classifier")
-st.write("Enter an email message below to check whether it is HAM or SPAM.")
+st.write("Enter an email message to check whether it is HAM or SPAM.")
 
 @st.cache_resource
 def train_model():
 data = pd.read_csv("email.csv")
 data = data.dropna(subset=["Category", "Message"]).drop_duplicates()
-
 data["Category"] = data["Category"].astype(str).str.strip().str.lower()
 data = data[data["Category"].isin(["ham", "spam"])]
 
@@ -45,5 +44,5 @@ if st.button("Check Email"):
         st.warning("Please enter an email message.")
 
 except Exception as e:
-st.error("The app could not load. Please check email.csv and its column names.")
+st.error("App error: Please check email.csv and its column names.")
 st.exception(e)
