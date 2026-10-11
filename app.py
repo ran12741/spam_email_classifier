@@ -10,39 +10,39 @@ st.write("Enter an email message to check whether it is HAM or SPAM.")
 
 @st.cache_resource
 def train_model():
-data = pd.read_csv("email.csv")
-data = data.dropna(subset=["Category", "Message"]).drop_duplicates()
-data["Category"] = data["Category"].astype(str).str.strip().str.lower()
-data = data[data["Category"].isin(["ham", "spam"])]
+    data = pd.read_csv("email.csv")
+    data = data.dropna(subset=["Category", "Message"]).drop_duplicates()
+    data["Category"] = data["Category"].astype(str).str.strip().str.lower()
+    data = data[data["Category"].isin(["ham", "spam"])]
 
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(data["Message"].astype(str))
-y = data["Category"]
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(data["Message"].astype(str))
+    y = data["Category"]
 
-model = MultinomialNB()
-model.fit(X, y)
+    model = MultinomialNB()
+    model.fit(X, y)
 
-return model, vectorizer
+    return model, vectorizer
 
 try:
-model, vectorizer = train_model()
+    model, vectorizer = train_model()
 
-email = st.text_area(
-    "Enter your email message:",
-    placeholder="Type or paste your email here..."
-)
+    email = st.text_area(
+        "Enter your email message:",
+        placeholder="Type or paste your email here..."
+    )
 
-if st.button("Check Email"):
-    if email.strip():
-        prediction = model.predict(vectorizer.transform([email]))[0]
+    if st.button("Check Email"):
+        if email.strip():
+            prediction = model.predict(vectorizer.transform([email]))[0]
 
-        if prediction == "spam":
-            st.error("🚨 This email is SPAM!")
+            if prediction == "spam":
+                st.error("🚨 This email is SPAM!")
+            else:
+                st.success("✅ This email is HAM (Not Spam).")
         else:
-            st.success("✅ This email is HAM (Not Spam).")
-    else:
-        st.warning("Please enter an email message.")
+            st.warning("Please enter an email message.")
 
 except Exception as e:
-st.error("App error: Please check email.csv and its column names.")
-st.exception(e)
+    st.error("App error: Please check email.csv and its column names.")
+    st.exception(e)
